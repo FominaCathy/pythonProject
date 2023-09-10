@@ -17,3 +17,8 @@ def checkout_negativ(cmd, text):
         return True
     else:
         return False
+
+
+def check_hash_crc32(cmd):
+    result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
+    return result.stdout

@@ -1,4 +1,4 @@
-from checks import checkout
+from checks import checkout, check_hash_crc32
 
 folder_in = '/home/user/tst'
 folder_out = '/home/user/out'
@@ -7,7 +7,7 @@ folder_ext3 = '/home/user/folder3'
 
 
 def test_add_archive():  # a создали архив
-    assert checkout(f'cd {folder_in}; 7z a {folder_out}/arx2', "Everything is Ok"), "test1 FAIL"
+    assert checkout(f'cd {folder_in}; 7z a {folder_out}/arx2', "Everything is Ok"), "test_add_archive FAIL"
 
 
 def test_check_e_extend():  # e извлекли из архива в заданную папку и ответили на все вопросы "да" -o задали директорию
@@ -22,15 +22,15 @@ def test_check_e_files():
 
 
 def test_totality():  # t проверка целостности архива
-    assert checkout(f'cd {folder_out}; 7z t arx2.7z', "Everything is Ok"), 'test3 FAIL'
+    assert checkout(f'cd {folder_out}; 7z t arx2.7z', "Everything is Ok"), 'test_totality FAIL'
 
 
 def test_delete():  # d удаление из архива
-    assert checkout(f'cd {folder_out}; 7z d arx2.7z', "Everything is Ok"), 'test3 FAIL'
+    assert checkout(f'cd {folder_out}; 7z d arx2.7z', "Everything is Ok"), 'NO delete'
 
 
 def test_update():  # u - обновление архива
-    assert checkout(f'cd {folder_in}; 7z u {folder_out}/arx2.7z', "Everything is Ok"), 'test3 FAIL'
+    assert checkout(f'cd {folder_in}; 7z u {folder_out}/arx2.7z', "Everything is Ok"), 'NO update'
 
 
 def test_check_archive():  #
@@ -68,3 +68,8 @@ def test_check_x_files():
     assert ext_subfolder and ext_tst1 and ext_tst2, 'FAIL files'
 
 
+def test_check_hash():
+    hash_crc32 = check_hash_crc32(f'cd {folder_out}; crc32 arx2.7z')
+    res_upper = checkout(f'cd {folder_out}; 7z h arx2.7z', hash_crc32.upper())
+    res_lower = checkout(f'cd {folder_out}; 7z h arx2.7z', hash_crc32.lower())
+    assert res_lower or res_upper, 'NO equal hash'
