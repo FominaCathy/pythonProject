@@ -3,14 +3,22 @@ from checks import checkout
 folder_in = '/home/user/tst'
 folder_out = '/home/user/out'
 folder_ext = '/home/user/folder1'
+folder_ext3 = '/home/user/folder3'
 
 
-def test_addArchive():  # a создали архив
+def test_add_archive():  # a создали архив
     assert checkout(f'cd {folder_in}; 7z a {folder_out}/arx2', "Everything is Ok"), "test1 FAIL"
 
 
-def test_step2():  # e извлекли из архива в заданную папку и ответили на все вопросы "да" -o задали директорию
-    assert checkout(f'cd {folder_out}; 7z e arx2.7z -o{folder_ext} -y', "Everything is Ok"), 'test2 FAIL'
+def test_check_e_extend():  # e извлекли из архива в заданную папку и ответили на все вопросы "да" -o задали директорию
+    assert checkout(f'cd {folder_out}; 7z e arx2.7z -o{folder_ext} -y', "Everything is Ok"), 'test_check_e_extend FAIL'
+
+
+def test_check_e_files():
+    ext_tst1 = checkout(f'cd {folder_ext}; ls', 'tst1')
+    ext_tst2 = checkout(f'cd {folder_ext}; ls', 'tst2')
+    ext_subfolder = checkout(f'cd {folder_ext}; ls', 'subfolder')
+    assert ext_subfolder and ext_tst1 and ext_tst2, 'FAIL files'
 
 
 def test_totality():  # t проверка целостности архива
@@ -40,3 +48,23 @@ def test_check_extract():  # e извлекли из архива в задан�
 
 def test_nonempty_archive():
     assert checkout(f'cd {folder_out}; 7z l arx2.7z', '2 files'), 'test_check_archive FAIL'
+
+
+def test_check_list_archive():
+    res_tst1 = checkout(f'cd {folder_out}; 7z l arx2.7z', 'tst1')
+    res_tst2 = checkout(f'cd {folder_out}; 7z l arx2.7z', 'tst2')
+    assert res_tst1 and res_tst2, 'test_check_list_archive FAIL'
+
+
+def test_check_x_extract():
+    assert checkout(f'cd {folder_out}; 7z x arx2.7z -o{folder_ext3} -y', "Everything is Ok")
+
+
+def test_check_x_files():
+    ext_tst1 = checkout(f'cd {folder_ext3}; ls', 'tst1')
+    ext_subfolder = checkout(f'cd {folder_ext3}; ls', 'subfolder')
+    ext_tst2 = checkout(f'cd {folder_ext3}/subfolder; ls', 'tst2')
+
+    assert ext_subfolder and ext_tst1 and ext_tst2, 'FAIL files'
+
+
