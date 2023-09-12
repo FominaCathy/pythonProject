@@ -1,0 +1,7 @@
+folder_in: /home/user/tst
+folder_out: /home/user/out
+folder_ext: /home/user/folder1
+folder_ext3: /home/user/folder3
+count: 5
+bs: 10K
+folder_bad: /home/user/folder2
