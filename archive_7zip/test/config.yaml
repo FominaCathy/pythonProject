@@ -11,5 +11,5 @@ pass: "3333"
 local_path: /home/user/test/p7zip-full.deb
 remote_path: /home/troll/p7zip-full.deb
 package: p7zip-full
-folder_stat: /home/user/test/stat.txt
+folder_stat: /home/troll/stat.txt
 ta: zip
