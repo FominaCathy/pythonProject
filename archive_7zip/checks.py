@@ -2,18 +2,38 @@ import subprocess
 import paramiko
 
 
-def ssh_checkout(host, user, passw, cmd, text, port=22):
+def ssh_checkout(host, user, passw, cmd, text, port=22, negative=False):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(hostname=host, username=user, password=passw, port=port)
+    client.connect(hostname=host, username=user, password=passw, port=port, allow_agent=False, look_for_keys=False)
     stdin, stdout, stderr = client.exec_command(cmd)
     exit_code = stdout.channel.recv_exit_status()
     out = (stdout.read() + stderr.read()).decode('utf-8')
     client.close()
-    if text in out and exit_code == 0:
-        return True
+    if not negative:
+        if text in out and exit_code == 0:
+            return True
+        else:
+            return False
     else:
-        return False
+        if text in out and exit_code != 0:
+            return True
+        else:
+            return False
+
+
+def ssh_check_hash(host, user, passw, cmd, port=22):
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(hostname=host, username=user, password=passw, port=port, allow_agent=False, look_for_keys=False)
+    stdin, stdout, stderr = client.exec_command(cmd)
+    exit_code = stdout.channel.recv_exit_status()
+    out = (stdout.read()).decode('utf-8')
+    client.close()
+    if exit_code == 0:
+        return out
+    else:
+        return None
 
 
 def upload_files(host, user, password, local_path, remote_path, port=22):
