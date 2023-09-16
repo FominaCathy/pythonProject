@@ -2,7 +2,7 @@ import random
 import string
 import yaml
 import pytest as pytest
-from checks import checkout
+from archive_7zip.checks import checkout, check_loadavg
 from datetime import datetime
 
 with open('config.yaml') as fy:
@@ -50,13 +50,23 @@ def make_subfolder():
 
 @pytest.fixture()
 def create_bad_archive():
-    checkout(f'cd {data["folder_in"]}; 7z a {data["folder_out"]}/arx2', "Everything is Ok")
-    checkout(f'cp {data["folder_out"]}/arx2.7z {data["folder_bad"]}', '')
-    checkout(f'truncate -s 1 {data["folder_bad"]}/arx2.7z', '')  # сделали битым
+    checkout(f'cd {data["folder_in"]}; 7z a -t{data["ta"]} {data["folder_out"]}/arx2',
+             "Everything is Ok")
+    checkout(f'cp {data["folder_out"]}/arx2.{data["ta"]} {data["folder_bad"]}', '')
+    checkout(f'truncate -s 1 {data["folder_bad"]}/arx2.{data["ta"]}', '')  # сделали битым
+
+
+# @pytest.fixture(autouse=True)
+# def speed():
+#     print(datetime.now().strftime('%H:%M:%S.%f'))
+#     yield
+#     print(datetime.now().strftime('%H:%M:%S.%f'))
 
 
 @pytest.fixture(autouse=True)
-def speed():
-    print(datetime.now().strftime('%H:%M:%S.%f'))
-    yield
-    print(datetime.now().strftime('%H:%M:%S.%f'))
+def statistic():
+    res_avg = check_loadavg(f'cat /proc/loadavg')
+    text_log = (f'time: {datetime.now().strftime("%H:%M:%S.%f")}; '
+                f'count: {data["count"]}; size: {data["bs"]}; loadavg: {res_avg}')
+
+    checkout(f'echo "{text_log}" >> {data["folder_stat"]}', "")
