@@ -3,7 +3,7 @@ import yaml
 
 
 def deploy():
-    with open('test/config.yaml') as fy:
+    with open('test/config_ssh.yaml') as fy:
         data = yaml.safe_load(fy)
 
     res = list()
@@ -11,7 +11,7 @@ def deploy():
                  data["local_path"], data["remote_path"])
     res.append(ssh_checkout(data["ip_user"], data["user"], data["pass"],
                             f"echo '{data['pass']}' | sudo -S dpkg -i {data['remote_path']}",
-                            "")) #Настраивается пакет"
+                            "Настраивается пакет")) #"
 
     res.append(ssh_checkout(data["ip_user"], data["user"], data["pass"],
                             f"echo '{data['pass']}' | sudo -S dpkg -s {data['package']}",

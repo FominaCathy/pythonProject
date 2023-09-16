@@ -1,0 +1,15 @@
+folder_in: /home/user/tst
+folder_out: /home/user/out
+folder_ext: /home/user/folder1
+folder_ext3: /home/user/folder3
+folder_bad: /home/user/folder2
+count: 2
+bs: 10K
+#ip_user: 0.0.0.0
+#user: troll
+#pass: "3333"
+local_path: /home/user/test/p7zip-full.deb
+remote_path: /home/troll/p7zip-full.deb
+package: p7zip-full
+folder_stat: /home/user/test/stat.txt
+ta: zip
